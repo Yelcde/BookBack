@@ -20,11 +20,13 @@ import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
 import br.edu.ifpb.pdm.booback.ui.screens.RegisterBookScreen
 import br.edu.ifpb.pdm.booback.ui.screens.RegisterScreen
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             BooBackApp()
         }
@@ -47,7 +49,6 @@ fun BooBackApp() {
             ) {
                 composable("mainScreen") { MainScreen() }
                 composable("registerBook") { RegisterBookScreen() }
-//                composable("profile") { ProfileScreen() }
             }
         }
     }

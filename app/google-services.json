@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147880812217",
+    "project_id": "book-back-b2784",
+    "storage_bucket": "book-back-b2784.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147880812217:android:8862b0b6eb9b9fa2834568",
+        "android_client_info": {
+          "package_name": "br.edu.ifpb.pdm.booback"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaJbHVkPfaljjBS9IUeB7-3-bSyzSuRcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

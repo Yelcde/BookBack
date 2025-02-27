@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.models.Book
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterBookScreen() {
@@ -37,13 +39,18 @@ fun RegisterBookScreen() {
     var pages by remember { mutableIntStateOf(0) }
     var isAvailable by remember { mutableStateOf(false) }
 
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .background(Color(0xFFE3F2FD))
             .padding(16.dp)
     ) {
-        Text(text = "Cadastro de Livros", style = MaterialTheme.typography.headlineMedium, color = Color(0xFF1565C0))
+        Text(
+            text = "Cadastro de Livros",
+            style = MaterialTheme.typography.headlineMedium,
+            color = Color(0xFF1565C0)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -85,21 +92,27 @@ fun RegisterBookScreen() {
 
         Button(
             onClick = {
-                if (title.isNotEmpty() && author.isNotEmpty() && gender.isNotEmpty()) {
-                    DB.addBook(
-                        Book(
+                if (title.isNotEmpty() && author.isNotEmpty() && gender.isNotEmpty() && pages > 0) {
+                    coroutineScope.launch {
+                        val newBook = Book(
                             title = title,
                             author = author,
                             gender = gender,
                             pages = pages,
                             isAvailable = isAvailable
                         )
-                    )
-                    title = ""
-                    author = ""
-                    gender = ""
-                    pages = 0
-                    isAvailable = false
+
+                        DB.addBook(
+                            newBook,
+                            onComplete = {
+                                title = ""
+                                author = ""
+                                gender = ""
+                                pages = 0
+                                isAvailable = false
+                            }
+                        )
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(
