@@ -13,13 +13,13 @@ fun BottomNavigationBar(navController: NavController) {
     NavigationBar(containerColor = Color(0xFF64B5F6)) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = Color.White)   },
-            label = { Text("Home") },
+            label = { Text("Home", color = Color.White) },
             selected = false,
             onClick = { navController.navigate("MainScreen") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = "Cadastrar Livro", tint = Color.White) },
-            label = { Text("Cadastrar") },
+            label = { Text("Cadastrar", color = Color.White) },
             selected = false,
             onClick = { navController.navigate("registerBook") }
         )
