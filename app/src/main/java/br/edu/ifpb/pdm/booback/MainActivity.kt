@@ -6,10 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import br.edu.ifpb.pdm.booback.ui.components.BottomNavigationBar
 import br.edu.ifpb.pdm.booback.ui.screens.LoginScreen
 import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
 import br.edu.ifpb.pdm.booback.ui.screens.RegisterBookScreen
@@ -20,12 +25,29 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            BooBackTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MainScreen()
-                }
+            BooBackApp()
+        }
+    }
+}
+
+@Composable
+fun BooBackApp() {
+    val navController = rememberNavController()
+
+    BooBackTheme {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = { BottomNavigationBar(navController) }
+        ) { paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = "mainScreen",
+                modifier = Modifier.padding(paddingValues)
+            ) {
+                composable("mainScreen") { MainScreen() }
+                composable("registerBook") { RegisterBookScreen() }
+//                composable("profile") { ProfileScreen() }
             }
         }
     }
