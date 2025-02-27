@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    NavigationBar(containerColor = Color(0xFF64B5F6)) {
+    NavigationBar(containerColor = Color(0xFF1E88E5)) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = Color.White)   },
             label = { Text("Home", color = Color.White) },
