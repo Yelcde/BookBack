@@ -8,11 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.edu.ifpb.pdm.booback.ui.components.BottomNavigationBar
 import br.edu.ifpb.pdm.booback.ui.screens.LoginScreen
@@ -37,27 +38,59 @@ class MainActivity : ComponentActivity() {
 fun BooBackApp() {
     val navController = rememberNavController()
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     BooBackTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = {
+                if (currentRoute != "loginScreen" && currentRoute != "registerScreen") {
+                    BottomNavigationBar(navController)
+                }
+            }
         ) { paddingValues ->
             NavHost(
                 navController = navController,
-                startDestination = "mainScreen",
+                startDestination = "loginScreen",
                 modifier = Modifier.padding(paddingValues)
             ) {
-                composable("mainScreen") { MainScreen(navController = navController) }
-                composable("registerBook") { RegisterBookScreen(bookId = null, navController = navController)}
+                composable("loginScreen") {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            navController.navigate("mainScreen") {
+                                popUpTo("loginScreen") { inclusive = true }
+                            }
+                        },
+                        onRegisterClick = {
+                            navController.navigate("registerScreen") {
+                                popUpTo("loginScreen") { inclusive = false }
+                            }
+                        }
+                    )
+                }
+                composable("mainScreen") {
+                    MainScreen(navController = navController)
+                }
+                composable("registerBook") {
+                    RegisterBookScreen(bookId = null, navController = navController)
+                }
                 composable("registerBook/{bookId}") { backStackEntry ->
                     val bookId = backStackEntry.arguments?.getString("bookId")
                     RegisterBookScreen(bookId = bookId, navController = navController)
                 }
-            }
+                composable("registerScreen") {
+                    RegisterScreen(onRegisterSuccess = {
+                        // Após cadastro, volte para a tela de login
+                        navController.navigate("loginScreen") {
+                            popUpTo("registerScreen") { inclusive = true }
+                        }
+                    })
+                }
             }
         }
     }
-
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -81,7 +114,7 @@ fun RegisterBookScreenPreview() {
 @Composable
 fun LoginScreenPreview() {
     BooBackTheme {
-        LoginScreen(onLoginSuccess = {})
+        LoginScreen(onLoginSuccess = {}, onRegisterClick = {})
     }
 }
 

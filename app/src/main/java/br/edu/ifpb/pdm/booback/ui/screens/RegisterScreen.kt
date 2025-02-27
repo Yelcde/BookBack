@@ -1,6 +1,6 @@
 package br.edu.ifpb.pdm.booback.ui.screens
 
-import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,7 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.edu.ifpb.pdm.booback.R
+import br.edu.ifpb.pdm.booback.models.User
+import br.edu.ifpb.pdm.booback.models.UserDAO
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(onRegisterSuccess: () -> Unit) {
@@ -25,6 +29,9 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val userDAO = UserDAO()
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -41,7 +48,6 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                 .size(120.dp)
                 .padding(bottom = 16.dp)
         )
-
 
         Text(
             text = "Criar Conta",
@@ -104,13 +110,20 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                     name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
                         errorMessage = "Preencha todos os campos!"
                     }
-
                     password != confirmPassword -> {
                         errorMessage = "As senhas não coincidem!"
                     }
-
                     else -> {
-                        onRegisterSuccess()
+                        val newUser = User(name = name, email = email, password = password)
+                        scope.launch(Dispatchers.IO) {
+                            userDAO.addUser(newUser) { registeredUser ->
+                                if (registeredUser != null) {
+                                    onRegisterSuccess()
+                                } else {
+                                    errorMessage = "Erro ao cadastrar usuário"
+                                }
+                            }
+                        }
                     }
                 }
             },
