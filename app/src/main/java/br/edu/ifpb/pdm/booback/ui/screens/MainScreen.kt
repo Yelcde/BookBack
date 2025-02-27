@@ -2,6 +2,7 @@ package br.edu.ifpb.pdm.booback.ui.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +42,8 @@ import androidx.compose.ui.unit.sp
 import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.models.Book
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
@@ -48,26 +52,31 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Lista de Livros") })
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(books) { book ->
-                    BookItem(
-                        book = book,
-                        onDelete = {
+            TopAppBar(
+                title = { Text("Lista de Livros", color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1E88E5)
+                )
+            )
+        },
+        content = { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues).background(Color(0xFFE3F2FD))) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(books) { book ->
+                        BookItem(book = book, onDelete = {
                             DB.removeBook(book.getId())
                             books = DB.getBooks()
                             showToast(context, "Livro removido")
                         },
-                        onEdit = { }
-                    )
+                            onEdit = { }
+                        )
+                    }
                 }
             }
         }
-    }
+    )
 }
+
 
 @Composable
 fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
@@ -75,16 +84,17 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(text = book.getTitle(), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Autor: ${book.getAuthor()}")
-            Text(text = "Gênero: ${book.getGender()}")
-            Text(text = "Páginas: ${book.getPages()}")
+            Text(text = book.getTitle(), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0D47A1))
+            Text(text = "Autor: ${book.getAuthor()}", color = Color(0xFF0D47A1))
+            Text(text = "Gênero: ${book.getGender()}", color = Color(0xFF0D47A1))
+            Text(text = "Páginas: ${book.getPages()}", color = Color(0xFF0D47A1))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (book.getIsAvailable()) {
@@ -112,7 +122,7 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
             ) {
                 TextButton(
                     onClick = onEdit,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64B5F6))
                 ) {
                     Text("Editar")
                 }
@@ -129,6 +139,8 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
         }
     }
 }
+
+
 
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

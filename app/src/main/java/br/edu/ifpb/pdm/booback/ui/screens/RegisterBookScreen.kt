@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.booback.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,9 +40,12 @@ fun RegisterBookScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+//            .background(Color(0xFFE3F2FD))
             .padding(16.dp)
     ) {
-        Text(text = "Cadastro de Livros", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Cadastro de Livros", style = MaterialTheme.typography.headlineMedium, color = Color(0xFF1565C0))
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = title,
@@ -71,22 +75,11 @@ fun RegisterBookScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = isAvailable,
-                onCheckedChange = { isAvailable = it }
-            )
-            Text(
-                text = "Disponível",
-                modifier = Modifier.padding(start = 8.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = isAvailable, onCheckedChange = { isAvailable = it })
+            Text("Disponível")
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -110,13 +103,13 @@ fun RegisterBookScreen() {
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF91CAFF) // Azul #91CAFF
+                containerColor = Color(0xFF1976D2)
             ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            Text("Adicionar Livro", fontSize = 18.sp)
+            Text("Adicionar Livro", fontSize = 18.sp, color = Color.White)
         }
     }
 }

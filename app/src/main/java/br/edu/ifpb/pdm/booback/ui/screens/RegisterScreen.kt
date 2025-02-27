@@ -115,7 +115,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF91CAFF) // Azul #91CAFF
+                containerColor = Color(0xFF64B5F6)
             ),
             modifier = Modifier
                 .fillMaxWidth()
