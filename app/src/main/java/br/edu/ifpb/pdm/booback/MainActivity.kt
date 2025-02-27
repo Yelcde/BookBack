@@ -6,13 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
+import br.edu.ifpb.pdm.booback.ui.screens.LoginScreen
+import br.edu.ifpb.pdm.booback.ui.screens.RegisterScreen
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,8 +32,24 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainScreenPreview() {
     BooBackTheme {
         MainScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    BooBackTheme {
+        LoginScreen(onLoginSuccess = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterScreenPreview() {
+    BooBackTheme {
+        RegisterScreen(onRegisterSuccess = {})
     }
 }

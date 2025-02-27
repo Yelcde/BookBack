@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.booback.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -103,15 +104,19 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                     name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
                         errorMessage = "Preencha todos os campos!"
                     }
+
                     password != confirmPassword -> {
                         errorMessage = "As senhas não coincidem!"
                     }
+
                     else -> {
                         onRegisterSuccess()
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(100, 181, 246)), // Azul #91CAFF
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF91CAFF) // Azul #91CAFF
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
