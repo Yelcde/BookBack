@@ -1,6 +1,5 @@
-package br.edu.ifpb.pdm.booback.composables
+package br.edu.ifpb.pdm.booback.ui.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,17 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.models.Book
 
 @Composable
-fun BookForm() {
+fun RegisterBookScreen() {
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var pages by remember { mutableIntStateOf(0) }
     var isAvailable by remember { mutableStateOf(false) }
-
-    val bookList = remember { mutableStateListOf<Book>() }
 
     Column(
         modifier = Modifier
@@ -95,7 +93,15 @@ fun BookForm() {
         Button(
             onClick = {
                 if (title.isNotEmpty() && author.isNotEmpty() && gender.isNotEmpty()) {
-                    bookList.add(Book(title, author, gender, pages, isAvailable))
+                    DB.addBook(
+                        Book(
+                            title = title,
+                            author = author,
+                            gender = gender,
+                            pages = pages,
+                            isAvailable = isAvailable
+                        )
+                    )
                     title = ""
                     author = ""
                     gender = ""
@@ -106,7 +112,9 @@ fun BookForm() {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF91CAFF) // Azul #91CAFF
             ),
-            modifier = Modifier.fillMaxWidth().height(50.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
             Text("Adicionar Livro", fontSize = 18.sp)
         }

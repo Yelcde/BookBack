@@ -10,8 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
 import br.edu.ifpb.pdm.booback.ui.screens.LoginScreen
+import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
+import br.edu.ifpb.pdm.booback.ui.screens.RegisterBookScreen
 import br.edu.ifpb.pdm.booback.ui.screens.RegisterScreen
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
 
@@ -35,6 +36,14 @@ class MainActivity : ComponentActivity() {
 fun MainScreenPreview() {
     BooBackTheme {
         MainScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterBookScreenPreview() {
+    BooBackTheme {
+        RegisterBookScreen()
     }
 }
 
