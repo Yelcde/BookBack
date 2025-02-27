@@ -1,7 +1,9 @@
 package br.edu.ifpb.pdm.booback.ui.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,10 +27,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,37 +42,63 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.models.Book
+import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    val context = LocalContext.current
-    var books by remember { mutableStateOf(DB.getBooks()) }
+fun MainScreen(navController: NavController) {
+    var books by remember { mutableStateOf<List<Book>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        DB.getBooks(
+            onSuccess = { books = it },
+            onFailure = { e -> Log.e("Firebase", "Erro ao buscar livros", e) }
+        )
+    }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Lista de Livros") })
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            TopAppBar(
+                title = { Text("Lista de Livros", color = Color.White) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF1E88E5)
+                )
+            )
+        },
+        content = { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(Color(0xFFE3F2FD))
+            ) {
                 items(books) { book ->
                     BookItem(
                         book = book,
                         onDelete = {
-                            DB.removeBook(book.getId())
-                            books = DB.getBooks()
-                            showToast(context, "Livro removido")
+                            coroutineScope.launch {
+                                DB.removeBook(
+                                    book.id,
+                                    onSuccess = {
+                                        Log.d("BookItem", "Livro removido com sucesso")
+                                    },
+                                    onFailure = { Log.e("BookItem", "Erro ao remover livro") }
+                                )
+                            }
                         },
-                        onEdit = { }
+                        onEdit = { navController.navigate("registerBook/${book.id}") }
                     )
                 }
             }
         }
-    }
+    )
 }
+
 
 @Composable
 fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
@@ -75,19 +106,25 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(text = book.getTitle(), fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Autor: ${book.getAuthor()}")
-            Text(text = "Gênero: ${book.getGender()}")
-            Text(text = "Páginas: ${book.getPages()}")
+            Text(
+                text = book.title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF0D47A1)
+            )
+            Text(text = "Autor: ${book.author}", color = Color(0xFF0D47A1))
+            Text(text = "Gênero: ${book.gender}", color = Color(0xFF0D47A1))
+            Text(text = "Páginas: ${book.pages}", color = Color(0xFF0D47A1))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (book.getIsAvailable()) {
+                if (book.isAvailable) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Disponível",
@@ -112,7 +149,7 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
             ) {
                 TextButton(
                     onClick = onEdit,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64B5F6))
                 ) {
                     Text("Editar")
                 }
@@ -129,6 +166,7 @@ fun BookItem(book: Book, onDelete: () -> Unit, onEdit: () -> Unit) {
         }
     }
 }
+
 
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

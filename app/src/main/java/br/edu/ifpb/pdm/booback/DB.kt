@@ -1,69 +1,68 @@
 package br.edu.ifpb.pdm.booback
 
+import android.annotation.SuppressLint
+import android.util.Log
 import br.edu.ifpb.pdm.booback.models.Book
-import java.util.UUID
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
-class DB private constructor() {
-    companion object {
-        private val books = mutableListOf<Book>()
+object DB {
+    @SuppressLint("StaticFieldLeak")
+    private val db = FirebaseFirestore.getInstance()
+    private val booksCollection = db.collection("books")
 
-        init {
-            books.add(
-                Book(
-                    id = UUID.randomUUID(),
-                    title = "Dom Casmurro",
-                    author = "Machado de Assis",
-                    gender = "Romance",
-                    pages = 256,
-                    isAvailable = true
-                )
-            )
-            books.add(
-                Book(
-                    id = UUID.randomUUID(),
-                    title = "1984",
-                    author = "George Orwell",
-                    gender = "Ficção Distópica",
-                    pages = 328,
-                    isAvailable = false
-                )
-            )
-            books.add(
-                Book(
-                    id = UUID.randomUUID(),
-                    title = "O Pequeno Príncipe",
-                    author = "Antoine de Saint-Exupéry",
-                    gender = "Infantil",
-                    pages = 96,
-                    isAvailable = true
-                )
-            )
+    fun addBook(book: Book, onComplete: (Boolean) -> Unit) {
+        booksCollection.add(book)
+            .addOnSuccessListener { onComplete(true) }
+            .addOnFailureListener { onComplete(false) }
+    }
+
+    fun updateBook(book: Book, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        if (book.id.isEmpty()) {
+
+            onFailure(Exception("bookId não fornecido"))
+            return
         }
 
-        fun addBook(book: Book) {
-            books.add(book)
-        }
+        val bookRef = booksCollection.document(book.id)
+        bookRef.set(book)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
+    }
 
-        fun getBooks(): List<Book> {
-            return books.toList()
-        }
+    fun removeBook(bookId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        booksCollection.document(bookId).delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
+    }
 
-        fun findBookById(id: UUID): Book? {
-            return books.find { it.getId() == id }
-        }
-
-        fun updateBook(id: UUID, newBook: Book): Boolean {
-            val index = books.indexOfFirst { it.getId() == id }
-            return if (index != -1) {
-                books[index] = newBook.copy(id = id)
-                true
-            } else {
-                false
+    fun getBooks(onSuccess: (List<Book>) -> Unit, onFailure: (Exception) -> Unit) {
+        booksCollection.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                onFailure(exception)
+                return@addSnapshotListener
             }
-        }
 
-        fun removeBook(id: UUID): Boolean {
-            return books.removeIf { it.getId() == id }
+            val booksList = snapshot?.documents?.mapNotNull { it.toObject<Book>() } ?: emptyList()
+            onSuccess(booksList)
         }
+    }
+
+    fun getBookById(bookId: String, callback: (Book?) -> Unit) {
+        booksCollection.document(bookId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val book = document.toObject(Book::class.java)
+                    callback(book)
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("BookDB", "Erro ao buscar livro por ID", e)
+                callback(null)
+            }
     }
 }

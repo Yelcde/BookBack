@@ -86,7 +86,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     errorMessage = "Preencha todos os campos!"
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF91CAFF)), // Azul #91CAFF
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64B5F6)),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
