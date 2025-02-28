@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.booback.models
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -34,22 +35,24 @@ class UserDAO {
             }
     }
 
-    // Função para buscar por e-mail (para login)
+
     fun searchByEmail(email: String, callback: (User?) -> Unit) {
         db.collection("users").whereEqualTo("email", email).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
                     val user = document.documents[0].toObject<User>()
+                    Log.d("UserDAO", "Usuário encontrado: $user")
                     callback(user)
                 } else {
+                    Log.d("UserDAO", "Nenhum usuário encontrado para o email: $email")
                     callback(null)
                 }
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+                Log.e("UserDAO", "Erro ao buscar usuário por email", e)
                 callback(null)
             }
     }
-
     fun searchById(id: String, callback: (User?) -> Unit) {
         db.collection("users").document(id).get()
             .addOnSuccessListener { document ->

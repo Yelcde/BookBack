@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.booback.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -81,12 +82,17 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
         Button(
             onClick = {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
-                    userDAO.searchByEmail(email) { user ->
-                        if (user != null && user.password == password) {
-                            onLoginSuccess()
-                        } else {
-                            errorMessage = "Login ou senha inválidos!"
+                    try {
+                        userDAO.searchByEmail(email) { user ->
+                            Log.d("LoginScreen", "Resultado do searchByEmail: $user")
+                            if (user != null && user.password == password) {
+                                onLoginSuccess()
+                            } else {
+                                errorMessage = "Login ou senha inválidos!"
+                            }
                         }
+                    } catch (e: Exception) {
+                        errorMessage = "Erro ao realizar login: ${e.message}"
                     }
                 } else {
                     errorMessage = "Preencha todos os campos!"

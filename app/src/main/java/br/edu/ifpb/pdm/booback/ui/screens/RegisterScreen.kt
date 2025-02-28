@@ -114,7 +114,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                         errorMessage = "As senhas não coincidem!"
                     }
                     else -> {
-                        val newUser = User(name = name, email = email, password = password)
+                        val newUser = User(id = "", name = name, email = email, password = password)
                         scope.launch(Dispatchers.IO) {
                             userDAO.addUser(newUser) { registeredUser ->
                                 if (registeredUser != null) {
