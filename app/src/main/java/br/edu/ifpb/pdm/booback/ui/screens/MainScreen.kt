@@ -67,9 +67,21 @@ fun MainScreen(navController: NavController) {
                 title = { Text("Lista de Livros", color = Color.White) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF1E88E5)
-                )
+                ),
+                actions = {
+                    TextButton(onClick = {
+                        DB.logout()
+
+                        navController.navigate("loginScreen") {
+                            popUpTo("mainScreen") { inclusive = true }
+                        }
+                    }) {
+                        Text("Sair", color = Color.White)
+                    }
+                }
             )
         },
+
         content = { paddingValues ->
             LazyColumn(
                 modifier = Modifier
