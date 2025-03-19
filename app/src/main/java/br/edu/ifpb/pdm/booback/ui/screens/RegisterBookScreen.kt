@@ -94,23 +94,27 @@ fun RegisterBookScreen(bookId: String? = null, navController: NavController) {
 
     // Launcher para capturar foto pela câmera
     var tempImageUri by remember { mutableStateOf<Uri?>(null) }
+    // Launcher para capturar foto pela câmera
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success: Boolean ->
         if (success) {
-            imageUriToUpload?.let { uri ->
+            tempImageUri?.let { uri ->
+                imageUriToUpload = uri  // garante que o URI para upload seja o mesmo
                 try {
                     context.contentResolver.openInputStream(uri)?.use { stream ->
-                        val bytes = stream.readBytes()
-                        Log.d("UploadTest", "Tamanho do arquivo: ${bytes.size} bytes")
+                        capturedImageBitmap = BitmapFactory.decodeStream(stream)
+                        Log.d("UploadTest", "Arquivo capturado, tamanho: ${capturedImageBitmap?.byteCount} bytes")
                     } ?: Log.e("UploadTest", "Stream nulo para o URI: $uri")
                 } catch (e: Exception) {
                     Log.e("UploadTest", "Erro ao ler arquivo: ${e.message}", e)
                 }
             }
-
+        } else {
+            tempImageUri = null
         }
     }
+
 
     // Launcher para solicitar a permissão de CAMERA em tempo de execução
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
