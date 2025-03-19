@@ -7,14 +7,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth  // importar o firebase
 
 object DB {
     @SuppressLint("StaticFieldLeak")
     private val db = FirebaseFirestore.getInstance()
     private val booksCollection = db.collection("books")
 
-    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() } // criar uma variavel
 
     fun addBook(book: Book, onComplete: (Boolean) -> Unit) {
         booksCollection.add(book)
@@ -53,10 +53,34 @@ object DB {
         }
     }
 
+    fun loginUser(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    onResult(false, task.exception?.message)
+                }
+            }
+    }
+
+
     fun logout() {
         auth.signOut()
     }
 
+
+
+    fun registerUser(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    onResult(false, task.exception?.message)
+                }
+            }
+    }
 
     fun getBookById(bookId: String, callback: (Book?) -> Unit) {
         booksCollection.document(bookId).get()

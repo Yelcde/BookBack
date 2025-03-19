@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.R
 import br.edu.ifpb.pdm.booback.models.UserDAO
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
@@ -82,17 +83,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
         Button(
             onClick = {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
-                    try {
-                        userDAO.searchByEmail(email) { user ->
-                            Log.d("LoginScreen", "Resultado do searchByEmail: $user")
-                            if (user != null && user.password == password) {
-                                onLoginSuccess()
-                            } else {
-                                errorMessage = "Login ou senha inválidos!"
-                            }
+                    DB.loginUser(email, password) { success, error ->
+                        if (success) {
+                            onLoginSuccess()
+                        } else {
+                            errorMessage = error ?: "Falha ao fazer login"
                         }
-                    } catch (e: Exception) {
-                        errorMessage = "Erro ao realizar login: ${e.message}"
                     }
                 } else {
                     errorMessage = "Preencha todos os campos!"
@@ -105,6 +101,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
         ) {
             Text(text = "Entrar", fontSize = 18.sp)
         }
+
 
 
 
