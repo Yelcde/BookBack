@@ -9,6 +9,8 @@ data class Book(
     var author: String = "",
     var gender: String = "",
     var pages: Int = 0,
+    val imageUrl: String = "",
     var isAvailable: Boolean = true
+
 ) {
 }

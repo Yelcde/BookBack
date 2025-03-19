@@ -1,6 +1,7 @@
 package br.edu.ifpb.pdm.booback
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
 import br.edu.ifpb.pdm.booback.models.Book
 import com.google.firebase.Firebase
@@ -8,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.auth.FirebaseAuth  // importar o firebase
+import com.google.firebase.storage.storage
 
 object DB {
     @SuppressLint("StaticFieldLeak")
@@ -97,4 +99,40 @@ object DB {
                 callback(null)
             }
     }
+
+    fun uploadBookImage(
+        imageUri: Uri,
+        bookId: String,
+        onComplete: (String?) -> Unit
+    ) {
+        val storageRef = Firebase.storage.reference.child("book_images/$bookId.jpg")
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    onComplete(uri.toString())
+                }
+            }
+            .addOnFailureListener {
+                onComplete(null)
+            }
+    }
+
+    fun addBookWithImage(book: Book, imageUri: Uri?, onComplete: (Boolean) -> Unit) {
+        if (imageUri != null) {
+            uploadBookImage(imageUri, book.id) { imageUrl ->
+                if (imageUrl != null) {
+                    val bookWithImage = book.copy(imageUrl = imageUrl)
+                    addBook(bookWithImage, onComplete)
+                } else {
+                    onComplete(false)
+                }
+            }
+        } else {
+            addBook(book, onComplete)
+        }
+    }
+
+
+
 }
