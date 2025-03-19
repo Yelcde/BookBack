@@ -1,5 +1,6 @@
 package br.edu.ifpb.pdm.booback
 
+import RegisterScreen
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,7 +20,6 @@ import br.edu.ifpb.pdm.booback.ui.components.BottomNavigationBar
 import br.edu.ifpb.pdm.booback.ui.screens.LoginScreen
 import br.edu.ifpb.pdm.booback.ui.screens.MainScreen
 import br.edu.ifpb.pdm.booback.ui.screens.RegisterBookScreen
-import br.edu.ifpb.pdm.booback.ui.screens.RegisterScreen
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
 import com.google.firebase.FirebaseApp
 
