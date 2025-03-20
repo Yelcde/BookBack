@@ -2,6 +2,7 @@ package br.edu.ifpb.pdm.booback.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.edu.ifpb.pdm.booback.DB
 import br.edu.ifpb.pdm.booback.R
 import br.edu.ifpb.pdm.booback.models.UserDAO
 import br.edu.ifpb.pdm.booback.ui.theme.BooBackTheme
@@ -82,17 +84,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
         Button(
             onClick = {
                 if (email.isNotEmpty() && password.isNotEmpty()) {
-                    try {
-                        userDAO.searchByEmail(email) { user ->
-                            Log.d("LoginScreen", "Resultado do searchByEmail: $user")
-                            if (user != null && user.password == password) {
-                                onLoginSuccess()
-                            } else {
-                                errorMessage = "Login ou senha inválidos!"
-                            }
+                    DB.loginUser(email, password) { success, error ->
+                        if (success) {
+                            onLoginSuccess()
+                        } else {
+                            errorMessage = error ?: "Falha ao fazer login"
                         }
-                    } catch (e: Exception) {
-                        errorMessage = "Erro ao realizar login: ${e.message}"
                     }
                 } else {
                     errorMessage = "Preencha todos os campos!"
@@ -108,17 +105,30 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
 
 
 
+
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        Button(
-            onClick = onRegisterClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64B5F6)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Cadastrar", fontSize = 18.sp)
+            Text(
+                text = "Ainda não tem conta? ",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Cadastre-se aqui!",
+                fontSize = 16.sp,
+                color = Color(0xFF64B5F6),
+                modifier = Modifier.clickable { onRegisterClick() }
+            )
         }
     }
 }

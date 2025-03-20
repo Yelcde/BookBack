@@ -1,0 +1,24 @@
+{
+  "recommendations": [
+    {
+      "id": 1,
+      "texto": "Sempre tenha um fundo de emergência para imprevistos."
+    },
+    {
+      "id": 2,
+      "texto": "Evite gastar mais do que ganha para manter suas finanças equilibradas."
+    },
+    {
+      "id": 3,
+      "texto": "Invista em seu futuro, seja por meio de uma aposentadoria ou investimentos."
+    },
+    {
+      "id": 4,
+      "texto": "Pesquise e compare antes de realizar grandes compras para evitar dívidas."
+    },
+    {
+      "id": 5,
+      "texto": "Estabeleça metas financeiras de curto, médio e longo prazo"
+    }
+  ]
+}
