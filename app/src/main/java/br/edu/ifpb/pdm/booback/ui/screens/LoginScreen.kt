@@ -2,6 +2,7 @@ package br.edu.ifpb.pdm.booback.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -108,14 +109,26 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        Button(
-            onClick = onRegisterClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64B5F6)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Cadastrar", fontSize = 18.sp)
+            Text(
+                text = "Ainda não tem conta? ",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Cadastre-se aqui!",
+                fontSize = 16.sp,
+                color = Color(0xFF64B5F6),
+                modifier = Modifier.clickable { onRegisterClick() }
+            )
         }
     }
 }
